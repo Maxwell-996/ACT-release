@@ -1,0 +1,14 @@
+# @package _global_
+defaults:
+  - /data: active_matter
+  - /model: transolver_plus
+  - /lr_scheduler: step_lr
+
+
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+name: vanilla_transolver_plus

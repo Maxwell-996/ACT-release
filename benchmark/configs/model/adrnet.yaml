@@ -1,0 +1,3 @@
+_target_: benchmark.models.ADRNet
+hidden_channels: 32
+nlayers: 16

@@ -1,0 +1,4 @@
+# @package _global_
+data:
+  well_base_path: "/path/to/well_data"
+experiment_dir: "experiments/"

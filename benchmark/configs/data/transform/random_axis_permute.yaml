@@ -1,0 +1,2 @@
+_target_: data.augmentation.RandomAxisPermute
+p: 1.0

@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - /data: MHD_64
+  - /model: flower
+  - /lr_scheduler: step_lr
+
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+name: flower_MHD_64

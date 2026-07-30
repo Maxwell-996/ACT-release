@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - /data: shallow_water
+  - /model: flower
+  - /lr_scheduler: step_lr
+
+
+model:
+  # Shallow water (2D radial dam break) uses OPEN boundaries -> zeros padding for the deform grid_sample.
+  boundary_condition_types: [OPEN]
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+name: flower_shallow_water

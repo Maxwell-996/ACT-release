@@ -1,0 +1,17 @@
+# @package _global_
+# Vanilla Transolver+ (no ACT) on steady-state DarcyFlow (nu -> u).
+defaults:
+  - /data: darcy
+  - /model: transolver_plus
+  - /lr_scheduler: step_lr
+
+data:
+  n_steps_input: 1
+  n_steps_output: 1
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+name: vanilla_transolver_darcy

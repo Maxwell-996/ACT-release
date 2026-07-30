@@ -1,0 +1,18 @@
+_target_: benchmark.models.TransolverPlus
+n_layers: 4
+n_hidden: 64
+dropout: 0.0
+n_head: 8
+act: gelu
+mlp_ratio: 4.0
+slice_num: 32
+ref: 8
+unified_pos: false
+gradient_checkpointing: true
+use_act: false
+num_deform_heads: 16
+deform_disp_net_branched: true
+deform_max_disp: null
+deform_hidden_dim: 16
+# Final head when use_act: Conv1d/2d/3d(1x1) -> GELU -> Conv(..., dim_out); ignored if use_act is false.
+projection_channels: 128

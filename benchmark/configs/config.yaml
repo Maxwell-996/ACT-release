@@ -1,0 +1,27 @@
+defaults:
+  - _self_
+  - trainer: defaults
+  - optimizer: adam
+  - experiment: ???
+  - server: ???
+  - resume_overrides: no_overrides
+data:
+  # Subset of train split: 1.0 = full set; 0.2 = first 20pct of samples (WellDataModule).
+  # train_sample_fraction: 0.2
+  n_steps_input: 4
+  n_steps_output: 1
+  normalization_type:
+    _partial_: true
+    _target_: data.normalization.ZScoreNormalization
+  train_dataset: # options: WellDataset or DeltaWellDataset
+    _partial_: true
+    _target_: data.datasets.WellDataset
+model:
+  gradient_checkpointing: True
+data_workers: 14
+# DDP: true if some parameters are unused on certain forwards (conditional blocks, rollout).
+ddp_find_unused_parameters: true
+wandb_project_name: "the_well_extended_again"
+# If true, ``wandb.init(..., name=...)`` appends a launch-time timestamp for the UI only;
+# on-disk experiment folders still use ``get_experiment_name`` without this suffix.
+wandb_append_launch_timestamp: true

@@ -1,0 +1,14 @@
+_target_: benchmark.models.ACTFNO
+modes1: 32
+modes2: 32
+hidden_channels: 64
+# If true: activation checkpoint each FNOBlock2d only (not lifting / deform / projection).
+gradient_checkpointing: true
+# Displacement head: true = 1x1 + 3x3 + dilated 3x3 (default); false = single 3x3 only
+disp_net_branched: true
+# ``null``: cap offsets at ~one normalized grid cell (min over axes of ``2/(N-1)``, linspace ``[-1,1]``).
+# Set a float (e.g. ``0.5``) for a fixed bound independent of resolution.
+max_disp: 0.5
+# If false: stack of FNOBlock2d only (no MultiHeadACTBlock between blocks).
+use_act: true
+#num_blocks: [1, 1, 1, 1]

@@ -1,0 +1,9 @@
+_target_: data.WellDataModule
+batch_size: 32
+train_sample_fraction: 1.0
+n_steps_input: 4
+well_base_path: /path/to/well_data
+well_dataset_name: shallow_water  
+use_normalization: True
+min_dt_stride: 1
+max_dt_stride: 1

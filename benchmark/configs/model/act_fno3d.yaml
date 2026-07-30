@@ -1,0 +1,13 @@
+_target_: benchmark.models.ACTFNO3D
+modes1: 32
+modes2: 32
+modes3: 32
+hidden_channels: 64
+# If true: activation checkpoint each FNOBlock3d only (not lifting / deform / projection).
+gradient_checkpointing: true
+# Displacement head: true = 1x1 + 3x3 + dilated 3x3 (default); false = single 3x3 only
+disp_net_branched: true
+# ``null``: ~one normalized cell per axis; float = fixed cap (see ``deform_bounds.max_displacement_normalized_one_cell``).
+max_disp: 0.5
+# If false: FNOBlock3d stack only (no MultiHeadACTBlock3d between blocks).
+use_act: true

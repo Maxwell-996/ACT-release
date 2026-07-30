@@ -1,0 +1,14 @@
+# @package _global_
+# Same as act_fno3d but disables MultiHeadACTBlock3d (FNO stack only).
+defaults:
+  - /data: turbulent_radiative_layer_3D
+  - /model: act_fno3d
+  - /lr_scheduler: step_lr
+
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+name: act_fno3d

@@ -1,0 +1,19 @@
+# @package _global_
+defaults:
+  - /data: poisson_gauss
+  - /model: act_fno
+  - /lr_scheduler: step_lr
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+data:
+  n_steps_input: 1
+  n_steps_output: 1
+
+model:
+  use_act: false
+
+name: vanilla_fno_poisson

@@ -1,0 +1,20 @@
+# @package _global_
+# Vanilla FNO (no ACT block) on steady-state DarcyFlow (nu -> u).
+defaults:
+  - /data: darcy
+  - /model: act_fno
+  - /lr_scheduler: step_lr
+
+model:
+  use_act: false
+
+data:
+  n_steps_input: 1
+  n_steps_output: 1
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+name: vanilla_fno_darcy

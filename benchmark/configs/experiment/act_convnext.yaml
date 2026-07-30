@@ -1,0 +1,15 @@
+# @package _global_
+# ConvNeXt U-Net with multi-head ACT blocks.
+defaults:
+  - /data: active_matter
+  - /model: act_unet_convnext
+  - /lr_scheduler: step_lr
+
+
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+name: act_unet_convnext

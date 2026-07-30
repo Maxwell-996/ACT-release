@@ -1,0 +1,18 @@
+# @package _global_
+# Transolver + ACT block per transformer block.
+defaults:
+  - /data: active_matter
+  - /model: transolver_plus
+  - /lr_scheduler: step_lr
+
+model:
+  use_act: true
+  deform_max_disp: 0.5
+
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+name: act_transolver

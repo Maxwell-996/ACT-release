@@ -1,0 +1,17 @@
+_target_: benchmark.trainer.Trainer
+epochs: 300
+val_frequency: 20
+rollout_val_frequency: 40
+short_validation_length: 150
+max_rollout_steps: 200
+num_time_intervals: 4
+# Explicit rollout slices [s0,e0,s1,e1,...] for validation metrics (half-open [s,e)).
+# Set to null to restore log-spaced bins from num_time_intervals.
+temporal_loss_intervals: [6, 13, 13, 31]
+make_rollout_videos: False
+checkpoint_frequency: 10 # Frequency of saving checkpoints. If 0, only use best/most recent. Setting this to 1 uses A LOT of disk space.
+# enable_amp: False
+# Global L2 grad norm clip (after AMP unscale when fp16 scaler is on). Set null or 0 to disable.
+max_grad_norm: 1.0
+loss_fn: ???
+checkpoint_path: "" # This is a default that is overridden by the code

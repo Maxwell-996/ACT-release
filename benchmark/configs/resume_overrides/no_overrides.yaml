@@ -1,0 +1,8 @@
+# @package _global_
+auto_resume: true   # Automatically resume if default experiment_folder and checkpoint exist
+folder_override: "" # Override the folder name for the experiment - considered "resume" if folder has chpts
+checkpoint_override: ""
+# checkpoint_override: "/home/user/proj/the_well-master/the_well/benchmark/experiments/diffusion_reaction-unet_convnext-UNetConvNext-0.0005/20260502_030445/checkpoints/checkpoint_120.pt"
+config_override: "" # Override the search path for a config file
+validation_mode: False
+ 

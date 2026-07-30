@@ -1,0 +1,3 @@
+_target_: benchmark.models.UNetConvNext
+blocks_per_stage: 2
+init_features: 42

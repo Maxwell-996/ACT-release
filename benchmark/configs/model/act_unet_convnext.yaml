@@ -1,0 +1,8 @@
+# Baseline: ``unet_convnext.yaml``; this file only overrides class + ACT-specific keys.
+_target_: benchmark.models.ACTUNetConvNext
+blocks_per_stage: 2
+init_features: 42
+num_heads: 16
+disp_net_branched: true
+max_disp: null
+deform_hidden_dim: 16

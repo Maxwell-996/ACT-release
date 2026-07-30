@@ -1,0 +1,17 @@
+# @package _global_
+# ConvNeXt U-Net (channels-first); swap /data for another Well dataset as needed.
+defaults:
+  - /data: active_matter
+  - /model: unet_convnext
+  - /lr_scheduler: step_lr
+
+
+
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+
+name: vanilla_unet_convnext

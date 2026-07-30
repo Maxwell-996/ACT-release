@@ -1,0 +1,16 @@
+# @package _global_
+# ACT ConvNeXt U-Net on shallow_water with max_disp=0.5 (vs default one-cell null).
+defaults:
+  - /data: shallow_water
+  - /model: act_unet_convnext
+  - /lr_scheduler: step_lr
+
+model:
+  max_disp: 0.5
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+name: act_convnext_sw_md05

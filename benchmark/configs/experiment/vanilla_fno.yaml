@@ -1,0 +1,17 @@
+# @package _global_
+# Same as act_fno but disables MultiHeadACTBlock (FNO stack only).
+defaults:
+  - /data: active_matter
+  - /model: act_fno
+  - /lr_scheduler: step_lr
+
+
+model:
+  use_act: false
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+name: vanilla_fno

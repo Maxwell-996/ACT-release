@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - /data: active_matter
+  - /model: act_fno
+  - /lr_scheduler: step_lr
+
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+name: act_fno
