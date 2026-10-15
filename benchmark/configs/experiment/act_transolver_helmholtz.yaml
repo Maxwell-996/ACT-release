@@ -1,0 +1,23 @@
+# @package _global_
+# Transolver+ with ACT block on steady-state Helmholtz (a -> u-bc).
+defaults:
+  - /data: helmholtz
+  - /model: transolver_plus
+  - /lr_scheduler: step_lr
+
+model:
+  use_act: true
+  deform_max_disp: 0.5
+  # Training target is u-bc, so the boundary is homogeneous Dirichlet.
+  boundary_mode: zeros
+
+data:
+  n_steps_input: 1
+  n_steps_output: 1
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+name: act_transolver_helmholtz

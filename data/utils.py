@@ -32,6 +32,7 @@ WELL_DATASETS = [
     "shallow_water",
     "ns",
     "darcy",
+    "helmholtz",
     "poisson_gauss",
 ]
 

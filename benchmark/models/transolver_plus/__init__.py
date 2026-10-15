@@ -20,7 +20,7 @@ from timm.layers import trunc_normal_
 from torch.utils.checkpoint import checkpoint
 
 from benchmark.models.common import BaseModel
-from benchmark.models.act_fno import MultiHeadACTBlock
+from benchmark.models.act_fno import MultiHeadACTBlock, set_warp_boundary_mode
 from benchmark.models.act_fno3d import MultiHeadACTBlock3d
 from benchmark.models.deform_bounds import max_displacement_normalized_one_cell
 
@@ -415,6 +415,9 @@ class TransolverPlus(BaseModel):
             ``ConvNd(1x1) -> GELU -> ConvNd(1x1)`` head on the channel-first grid
             (same pattern as :class:`ACTFnoBackbone` projection). Ignored when
             ``use_act`` is False.
+        boundary_mode: Warp sampling outside the domain for every 2D
+            :class:`MultiHeadACTBlock`. ``"periodic"`` folds coordinates;
+            ``"zeros"`` leaves them out of range so samples decay to 0.
     """
 
     def __init__(
@@ -447,6 +450,7 @@ class TransolverPlus(BaseModel):
         deform_max_disp: float | None = None,
         deform_hidden_dim: int = 64,
         projection_channels: int = 128,
+        boundary_mode: str = "periodic",
     ):
         spatial_resolution = tuple(int(s) for s in spatial_resolution)
         super().__init__(n_spatial_dims, spatial_resolution)
@@ -536,6 +540,12 @@ class TransolverPlus(BaseModel):
             self.projection = None
         self.placeholder = nn.Parameter((1.0 / n_hidden) * torch.randn(n_hidden))
         self.apply(self._init_weights)
+        if boundary_mode not in ("periodic", "zeros"):
+            raise ValueError(
+                f"boundary_mode must be 'periodic' or 'zeros', got {boundary_mode!r}"
+            )
+        self.boundary_mode = boundary_mode
+        set_warp_boundary_mode(self, boundary_mode)
 
     @staticmethod
     def _init_weights(m: nn.Module) -> None:

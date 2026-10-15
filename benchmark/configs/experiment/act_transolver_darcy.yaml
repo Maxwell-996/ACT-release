@@ -8,6 +8,8 @@ defaults:
 model:
   use_act: true
   deform_max_disp: 0.5
+  # DarcyFlow has homogeneous Dirichlet (u=0) boundaries, not periodic.
+  boundary_mode: zeros
 
 data:
   n_steps_input: 1

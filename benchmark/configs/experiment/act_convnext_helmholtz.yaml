@@ -1,0 +1,21 @@
+# @package _global_
+# ConvNeXt U-Net with multi-head ACT blocks on steady-state Helmholtz (a -> u-bc).
+defaults:
+  - /data: helmholtz
+  - /model: act_unet_convnext
+  - /lr_scheduler: step_lr
+
+data:
+  n_steps_input: 1
+  n_steps_output: 1
+
+model:
+  # Training target is u-bc, so the boundary is homogeneous Dirichlet.
+  boundary_mode: zeros
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+name: act_unet_convnext_helmholtz

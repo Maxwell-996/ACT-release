@@ -30,6 +30,7 @@ class MultiHeadACTBlock(nn.Module):
         disp_net_branched: bool = True,
         skip_output_norm: bool = False,
         hidden_channels=16,
+        boundary_mode: str = "periodic",
     ):
         super().__init__()
         self.num_heads = num_heads
@@ -40,6 +41,11 @@ class MultiHeadACTBlock(nn.Module):
         self.disp_net_branched = disp_net_branched
         self.skip_output_norm = skip_output_norm
         self.hidden_channels = hidden_channels
+        if boundary_mode not in ("periodic", "zeros"):
+            raise ValueError(
+                f"boundary_mode must be 'periodic' or 'zeros', got {boundary_mode!r}"
+            )
+        self.boundary_mode = boundary_mode
         self.value_proj = nn.Conv2d(in_channels, num_heads * self.hidden_channels, 1)
         extra_disp_c = 2 if CONCAT_IDENTITY_COORDS_FOR_DISP else 0
         disp_in = self.hidden_channels + extra_disp_c
@@ -122,13 +128,20 @@ class MultiHeadACTBlock(nn.Module):
     def _sampling_grid(self, x: torch.Tensor, disp: torch.Tensor) -> torch.Tensor:
         """grid_sample layout: (n_pack, H, W, 2), last dim (x, y) for ``F.grid_sample``.
 
-        Toroidal fold with period 2 per coordinate, but **only where** ``grid`` is strictly
-        outside ``[-1, 1]``. Values in the closed interval (including ``±1`` corners from
-        ``linspace``) are unchanged so zero displacement matches the identity grid; e.g.
-        ``1.05`` folds like the old global ``remainder``, while ``1.0`` stays ``1.0``.
+        ``boundary_mode == "periodic"``: toroidal fold with period 2 per coordinate,
+        but **only where** ``grid`` is strictly outside ``[-1, 1]``. Values in the closed
+        interval (including ``±1`` corners from ``linspace``) are unchanged so zero
+        displacement matches the identity grid.
+
+        ``boundary_mode == "zeros"``: no fold. Out-of-range coordinates are left outside
+        ``[-1, 1]`` so ``grid_sample(padding_mode="zeros")`` returns 0 there — the
+        homogeneous-Dirichlet inductive bias (feature decays to 0 across one cell toward
+        the geometric boundary).
         """
         delta = disp.movedim(1, -1)
         grid = self._identity_grid_hw2(x) + delta
+        if self.boundary_mode == "zeros":
+            return grid
         wrapped = torch.remainder(grid + 1.0, 2.0) - 1.0
         outside = (grid > 1.0) | (grid < -1.0)
         return torch.where(outside, wrapped, grid)
@@ -153,7 +166,7 @@ class MultiHeadACTBlock(nn.Module):
             vals,
             grid,
             mode="bilinear",
-            padding_mode="border",
+            padding_mode="zeros" if self.boundary_mode == "zeros" else "border",
             align_corners=True,
         )
         # breakpoint()
@@ -190,6 +203,24 @@ class MultiHeadACTBlock(nn.Module):
         if self.training:
             return out, None
         return out, disp
+
+
+def set_warp_boundary_mode(module: nn.Module, boundary_mode: str) -> int:
+    """Set ``boundary_mode`` on every ``MultiHeadACTBlock`` under ``module``.
+
+    Returns the number of blocks updated.
+    """
+    if boundary_mode not in ("periodic", "zeros"):
+        raise ValueError(
+            f"boundary_mode must be 'periodic' or 'zeros', got {boundary_mode!r}"
+        )
+    count = 0
+    for m in module.modules():
+        if isinstance(m, MultiHeadACTBlock):
+            m.boundary_mode = boundary_mode
+            count += 1
+    return count
+
 
 class SpectralConv2d(nn.Module):
     def __init__(self, in_channels, out_channels, modes_height, modes_width):
@@ -311,6 +342,7 @@ class ACTFnoBackbone(nn.Module):
         spatial_resolution: tuple[int, int] | None = None,
         max_disp: float | None = None,
         use_act: bool = True,
+        boundary_mode: str = "periodic",
     ):
         super().__init__()
         self.checkpoint_fno = checkpoint_fno
@@ -353,6 +385,7 @@ class ACTFnoBackbone(nn.Module):
                         disp_net_branched=disp_net_branched,
                         max_disp=deform_max_disp,
                         skip_output_norm=(i == n_blocks - 1),
+                        boundary_mode=boundary_mode,
                     )
                 )
             else:
@@ -399,6 +432,7 @@ class ACTFNO(BaseModel):
         disp_net_branched: bool = True,
         max_disp: float | None = None,
         use_act: bool = True,
+        boundary_mode: str = "periodic",
     ):
         super().__init__(n_spatial_dims, spatial_resolution)
 
@@ -415,6 +449,7 @@ class ACTFNO(BaseModel):
             spatial_resolution=(spatial_resolution[0], spatial_resolution[1]),
             max_disp=max_disp,
             use_act=use_act,
+            boundary_mode=boundary_mode,
         )
         self.gradient_checkpointing = gradient_checkpointing
 

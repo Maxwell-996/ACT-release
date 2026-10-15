@@ -11,4 +11,9 @@ disp_net_branched: true
 max_disp: 0.5
 # If false: stack of FNOBlock2d only (no MultiHeadACTBlock between blocks).
 use_act: true
+# Warp boundary handling for out-of-range sampling coords:
+#   "periodic": toroidal fold (out-of-range wraps to the opposite edge) — periodic domains (e.g. ns).
+#   "zeros":    no fold; grid_sample padding_mode="zeros" so out-of-range samples decay to 0 —
+#               homogeneous-Dirichlet domains (e.g. Darcy u=0, or bc-shifted Helmholtz).
+boundary_mode: periodic
 #num_blocks: [1, 1, 1, 1]

@@ -15,4 +15,8 @@ data:
   n_steps_input: 1
   n_steps_output: 1
 
+model:
+  # DarcyFlow has homogeneous Dirichlet (u=0) boundaries, not periodic.
+  boundary_mode: zeros
+
 name: act_fno_darcy

@@ -17,7 +17,7 @@ from timm.models.layers import DropPath
 from torch.utils.checkpoint import checkpoint
 
 from benchmark.models.common import BaseModel
-from benchmark.models.act_fno import MultiHeadACTBlock
+from benchmark.models.act_fno import MultiHeadACTBlock, set_warp_boundary_mode
 from benchmark.models.act_fno3d import MultiHeadACTBlock3d
 from benchmark.models.deform_bounds import max_displacement_normalized_one_cell
 
@@ -440,6 +440,7 @@ class ACTUNetConvNext(BaseModel):
         disp_net_branched: bool = True,
         max_disp: float | None = None,
         deform_hidden_dim: int = 64,
+        boundary_mode: str = "periodic",
     ):
         super().__init__(n_spatial_dims, spatial_resolution)
         if n_spatial_dims not in (2, 3):
@@ -499,6 +500,12 @@ class ACTUNetConvNext(BaseModel):
             mode="neck",
         )
         self.decoder = nn.ModuleList(decoder)
+        if boundary_mode not in ("periodic", "zeros"):
+            raise ValueError(
+                f"boundary_mode must be 'periodic' or 'zeros', got {boundary_mode!r}"
+            )
+        self.boundary_mode = boundary_mode
+        set_warp_boundary_mode(self, boundary_mode)
 
     def optional_checkpointing(self, layer, *inputs, **kwargs):
         if self.gradient_checkpointing:

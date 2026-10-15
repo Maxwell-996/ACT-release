@@ -1,0 +1,22 @@
+# @package _global_
+defaults:
+  - /data: helmholtz
+  - /model: act_fno
+  - /lr_scheduler: step_lr
+
+
+trainer:
+  loss_fn:
+    _target_: benchmark.metrics.MSE
+  formatter: channels_first_default
+
+# Helmholtz is steady-state (a -> u-bc). Override the global n_steps_input=4 default.
+data:
+  n_steps_input: 1
+  n_steps_output: 1
+
+model:
+  # Training target is u-bc, so the boundary is homogeneous Dirichlet.
+  boundary_mode: zeros
+
+name: act_fno_helmholtz
